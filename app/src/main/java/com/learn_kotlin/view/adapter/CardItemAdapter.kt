@@ -1,23 +1,32 @@
 package com.learn_kotlin.view.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.learn_kotlin.R
 import com.learn_kotlin.databinding.ItemFeedBinding
 import com.learn_kotlin.model.Feed
 import com.learn_kotlin.viewmodel.CardViewModel
 
-class CardItemAdapter(feeds: List<Feed>, private val mContext: Context) :
+class CardItemAdapter(
+    feeds: List<Feed>,
+    private val mActivity: FragmentActivity,
+    private val viewModel: CardViewModel
+) :
     RecyclerView.Adapter<CardItemAdapter.CardItemViewHolder>() {
+
+    private val mFeedList: List<Feed>
+
+    init {
+        mFeedList = ArrayList(feeds)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardItemViewHolder {
         val itemBinding = DataBindingUtil.inflate<ItemFeedBinding>(
-            LayoutInflater.from(mContext),
-            R.layout.item_feed,
-            parent,
-            false
+            LayoutInflater.from(mActivity),
+            R.layout.item_feed, parent, false
         )
 
         return CardItemViewHolder(itemBinding)
@@ -28,14 +37,22 @@ class CardItemAdapter(feeds: List<Feed>, private val mContext: Context) :
     }
 
     override fun onBindViewHolder(holder: CardItemViewHolder, position: Int) {
-        val viewModel = CardViewModel()
+//        val viewModel: CardViewModel =
+//            ViewModelProviders.of(mActivity).get(CardViewModel::class.java)
+
+        /*val viewModel: CardViewModel by lazy {
+            ViewModelProviders.of(mActivity).get(CardViewModel::class.java)
+        }*/
+
+        holder.mItemBinding.lifecycleOwner = mActivity
         holder.bind(viewModel)
-    }
 
-    private val mFeedList: List<Feed>
-
-    init {
-        mFeedList = ArrayList(feeds)
+/*        holder.apply {
+            mItemBinding.apply {
+                lifecycleOwner = mActivity
+            }
+            bind(viewModel)
+        }*/
     }
 
     inner class CardItemViewHolder(var mItemBinding: ItemFeedBinding) :
@@ -44,6 +61,11 @@ class CardItemAdapter(feeds: List<Feed>, private val mContext: Context) :
         fun bind(viewModel: CardViewModel) {
             mItemBinding.itemViewModel = viewModel
             mItemBinding.executePendingBindings()
+
+/*            mItemBinding.apply {
+                itemViewModel = viewModel
+                executePendingBindings()
+            }*/
         }
     }
 }
