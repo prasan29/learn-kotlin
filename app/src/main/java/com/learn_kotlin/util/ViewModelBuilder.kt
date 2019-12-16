@@ -1,10 +1,18 @@
 package com.learn_kotlin.util
 
-class ViewModelBuilder {
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProviders
+import com.learn_kotlin.base.BaseViewModel
+
+class ViewModelBuilder private constructor() {
+    fun <T : BaseViewModel?> buildViewModel(
+        modelClass: Class<T>?,
+        activity: FragmentActivity?
+    ): T {
+        return ViewModelProviders.of(activity!!)[modelClass!!]
+    }
+
     companion object {
-        private lateinit var viewModelBuilder: ViewModelBuilder
-        fun getInstance(): ViewModelBuilder {
-            return viewModelBuilder
-        }
+        val instance = ViewModelBuilder()
     }
 }

@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.learn_kotlin.R
 import com.learn_kotlin.databinding.ActivityMainBinding
-import com.learn_kotlin.util.ViewModelBuilderJ
+import com.learn_kotlin.util.ViewModelBuilder
 import com.learn_kotlin.viewmodel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -28,6 +28,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun buildViewModels() {
         mMainViewModel =
-            ViewModelBuilderJ.instance.buildViewModel(MainViewModel::class.java, this)
+            ViewModelBuilder.instance.buildViewModel(MainViewModel::class.java, this)
     }
 }
