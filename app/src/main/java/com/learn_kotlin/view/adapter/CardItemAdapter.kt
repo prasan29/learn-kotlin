@@ -1,19 +1,19 @@
 package com.learn_kotlin.view.adapter
 
+import android.animation.ObjectAnimator
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.view.animation.BounceInterpolator
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.learn_kotlin.R
 import com.learn_kotlin.databinding.ItemFeedBinding
 import com.learn_kotlin.model.Feed
-import com.learn_kotlin.viewmodel.CardViewModel
 
 class CardItemAdapter(
     feeds: List<Feed>,
-    private val mActivity: FragmentActivity,
-    private val viewModel: CardViewModel
+    private val mActivity: FragmentActivity
 ) :
     RecyclerView.Adapter<CardItemAdapter.CardItemViewHolder>() {
 
@@ -37,35 +37,39 @@ class CardItemAdapter(
     }
 
     override fun onBindViewHolder(holder: CardItemViewHolder, position: Int) {
-//        val viewModel: CardViewModel =
-//            ViewModelProviders.of(mActivity).get(CardViewModel::class.java)
+        val feed: Feed = mFeedList.get(position)
 
-        /*val viewModel: CardViewModel by lazy {
-            ViewModelProviders.of(mActivity).get(CardViewModel::class.java)
-        }*/
+        holder.apply {
+            mItemBinding.lifecycleOwner = mActivity
+            bind(feed)
+            mItemBinding.imageLike.apply {
+                setOnClickListener {
+                    mFeedList.get(position).like = !mFeedList.get(position).like
 
-        holder.mItemBinding.lifecycleOwner = mActivity
-        holder.bind(viewModel)
+                    val animator: ObjectAnimator =
+                        ObjectAnimator.ofFloat(it, "translationY", -52f, 0f)
+                    animator.apply {
+                        duration = 500
+                        interpolator = BounceInterpolator()
+                        start()
+                    }
 
-/*        holder.apply {
-            mItemBinding.apply {
-                lifecycleOwner = mActivity
+                    holder.apply {
+                        bind(mFeedList.get(position))
+                    }
+                }
             }
-            bind(viewModel)
-        }*/
+        }
     }
 
     inner class CardItemViewHolder(var mItemBinding: ItemFeedBinding) :
         RecyclerView.ViewHolder(mItemBinding.root) {
 
-        fun bind(viewModel: CardViewModel) {
-            mItemBinding.itemViewModel = viewModel
-            mItemBinding.executePendingBindings()
-
-/*            mItemBinding.apply {
-                itemViewModel = viewModel
+        fun bind(feedData: Feed) {
+            mItemBinding.apply {
+                feed = feedData
                 executePendingBindings()
-            }*/
+            }
         }
     }
 }
